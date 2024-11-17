@@ -1,0 +1,141 @@
+/* Tela de Carregamento */
+
+.loading-container {
+  display: none; /* Inicialmente escondido */
+  justify-content: center;
+  align-items: center;
+  height: 35vh;
+  width: 35vh;
+  margin-top: 20px;
+  margin-left: 20px;
+  background-color: rgba(255, 255, 255, 0.7); /* Cor de fundo com transparência */
+}
+
+.loading {
+  border: 8px solid #f3f3f3; /* Cor do background */
+  border-top: 8px solid #3498db; /* Cor do spinner */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1.5s linear infinite;
+}
+
+#logo-image {
+  width: 100px;
+  height: 100px;
+  position: fixed;
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0px 15px 15px rgba(0, 0, 0, 0.3); /* Sombra suave embaixo da imagem */
+}
+#fama-image {
+  width: 100px;
+  height: 40px;
+  position: sticky;
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;  /* Coloca a imagem à frente do container */
+  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.3); /* Sombra suave embaixo da imagem */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+.error-message {
+  color: red;
+  text-align: center;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+/* Estilos da página */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #FF6600;
+}
+
+.container {
+  
+  text-align: center;
+  padding: 50px;
+  background-color: #000000;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 500px;
+}
+
+h1 {
+  color: #f3f3f3;
+}
+
+p {
+  color: #555;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #FF6600;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #f98131;
+}
+
+footer {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #888;
+}
+
+        /* Estilo do loader */
+    
+
+
+
+      @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+      }
+
+      /* QR Code Image (inicialmente oculto) */
+      #qr-code-image {
+        margin-top: 20px;
+        margin-left: 20px;  /* Adiciona um espaço entre o QR code e o container */
+        max-width: 300px;  /* Limita a largura do QR code */
+        height: auto;
+        display: block;
+          
+      }
+
+      .error-message {
+          color: red;
+          text-align: center;
+          font-size: 18px;
+          margin-top: 20px;
+      }
+
+      .whatsapp-connect{
+        color: rgb(15, 96, 189);
+        position: fixed;
+        top: 80%;
+          text-align: center;
+          font-size: 18px;
+          margin-top: 20px;
+      }

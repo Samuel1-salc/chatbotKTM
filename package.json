@@ -1,0 +1,59 @@
+{
+  "name": "chatbotfama",
+  "productName": "chatbotfama",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\"",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.5.0",
+    "@electron-forge/maker-deb": "^7.5.0",
+    "@electron-forge/maker-rpm": "^7.5.0",
+    "@electron-forge/maker-squirrel": "^7.5.0",
+    "@electron-forge/maker-zip": "^7.5.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
+    "@electron-forge/plugin-fuses": "^7.5.0",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^33.2.0"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Samuel1-salc",
+    "email": "andrade.carneiro@mail.uft.edu.br"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "chrome-finder": "^1.0.7",
+    "electron-squirrel-startup": "^1.0.1",
+    "puppeteer": "^18.2.1",
+    "qrcode": "^1.5.4",
+    "whatsapp-web.js": "^1.26.0"
+  },
+  "build": {
+    "appId": "chatbotfama",
+    "productName": "chatbotfama",
+    "copyright": "Copyright © 2024",
+    "win": {
+      "target": "nsis",
+        "icon": "Desktop.ico"
+    },
+    "nsis": {
+      "oneClick": false,  
+      "perMachine": true, 
+      "allowToChangeInstallationDirectory": true, 
+      "createDesktopShortcut": true,  
+      "createStartMenuShortcut": true  
+    },
+    
+    "asar": true
+   
+  } 
+}
+
