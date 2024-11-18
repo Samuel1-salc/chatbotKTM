@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => {
            
             // Caminho da imagem do QR Code
-            const qrImageUrl = "../../qr.png" + '?t=' + new Date().getTime();  // Adiciona um timestamp à URL
+            const qrImageUrl = "./meu_qrcode.png" + '?t=' + new Date().getTime();  // Adiciona um timestamp à URL
             const img = new Image();
             img.onload = function () {
                 // Esconde o loader e exibe o QR code

@@ -4,28 +4,22 @@ function start(mainWindow) {
 
     console.log('iniciando');
 
-    const { app } = require('electron');
+    //const { app } = require('electron');
     const qrcode = require('qrcode');
     const fs = require('fs');
     const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js'); // Mudança Buttons
     const puppeteer = require('puppeteer');
-    const chromeFinder = require('chrome-finder');
+    //const chromeFinder = require('chrome-finder');
     const path = require('node:path')
-    const appPath = app.getAppPath();
-    const qrPath = path.join(appPath, '../', 'qr.png');
-    console.log(qrPath);
-    const chromePath = chromeFinder(); // Encontra o caminho do Chrome ou Chromium no seu sistema
-    console.log('Caminho do aplicativo:', app.getAppPath());
+    //const appPath = app.getAppPath();
+    //const qrPath = path.join(appPath, '../', 'qr.png');
+    //console.log(qrPath);
+   // const chromePath = chromeFinder(); // Encontra o caminho do Chrome ou Chromium no seu sistema
+    //console.log('Caminho do aplicativo:', app.getAppPath());
 
 
-
-    const client = new Client({
-        puppeteer: {
-            headless: true, // Modo sem cabeça (não exibe o navegador)
-            executablePath: chromePath,  // Caminho do seu navegador (Chrome ou Chromium)
-
-        }
-    });
+    const client = new Client();
+   
 
     client.on('ready', async () => {
         console.log('WhatsApp Web está pronto!');
@@ -35,13 +29,12 @@ function start(mainWindow) {
 
 
 
-
-
-
     // serviço de leitura do qr code
     client.on('qr', qr => {
         console.log('QR Code recebido, escaneie o código abaixo');
-        qrcode.toFile(qrPath, qr, {
+    
+        // Gerar e salvar o QR Code como imagem
+        qrcode.toFile('./frontend/meu_qrcode.png', qr, {
             width: 300,
             margin: 4,
             color: {
@@ -49,13 +42,17 @@ function start(mainWindow) {
                 light: '#fff'
             }
         }, (err) => {
-            if (err) throw err;
-            console.log('QR Code salvo como qr.png');
-            console.log('Arquivo salvo em:', qrPath);
-
+            if (err) {
+                console.error('Erro ao gerar o QR Code:', err);
+            } else {
+                console.log('QR Code salvo como meu_qrcode.png');
+                // Aqui você pode adicionar mais lógica se precisar, como retornar o caminho do arquivo
+            }
         });
-
     });
+
+
+    
     client.on('ready', () => {
         console.log('Tudo certo! WhatsApp conectado.');
         const readyMessage = document.getElementById('whatsapp-connect');
@@ -87,7 +84,7 @@ function start(mainWindow) {
                 msg.from,
                 `Olá! ${name.split(" ")[0]}, sou o assistente virtual Fama Empreendimentos. Como posso ajudá-lo hoje? Por favor, digite uma das opções abaixo:\n\n1 - Compras\n2 - Comercial/Aldeia mall\n3 - Financeiro\n4 - RH\n5 - Horário de funcionamento da empresa\n6 - Horário de funcionamento das bicicletas fama\n\n`
             );
-            opcoes();
+            
         } else if (msg.body !== null && msg.from.endsWith('@c.us')) {
             //menuDisponivel = true;
             const chat = await msg.getChat();
