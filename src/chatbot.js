@@ -34,7 +34,7 @@ function start(mainWindow) {
         console.log('QR Code recebido, escaneie o código abaixo');
     
         // Gerar e salvar o QR Code como imagem
-        qrcode.toFile('./frontend/meu_qrcode.png', qr, {
+        qrcode.toFile('./src/frontend/meu_qrcode.png', qr, {
             width: 300,
             margin: 4,
             color: {
