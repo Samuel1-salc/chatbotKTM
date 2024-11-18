@@ -237,21 +237,6 @@
     fs-extra "^9.0.1"
     minimist "^1.2.5"
 
-"@electron/get@^2.0.0":
-  version "2.0.3"
-  resolved "https://registry.npmjs.org/@electron/get/-/get-2.0.3.tgz"
-  integrity sha512-Qkzpg2s9GnVV2I2BjRksUi43U5e6+zaQMcjoJy0C+C5oxaKl+fmckGDQFtRpZpZV0NQekuZZ+tGz7EA9TVnQtQ==
-  dependencies:
-    debug "^4.1.1"
-    env-paths "^2.2.0"
-    fs-extra "^8.1.0"
-    got "^11.8.5"
-    progress "^2.0.3"
-    semver "^6.2.0"
-    sumchecker "^3.0.1"
-  optionalDependencies:
-    global-agent "^3.0.0"
-
 "@electron/get@^3.0.0":
   version "3.1.0"
   resolved "https://registry.npmjs.org/@electron/get/-/get-3.1.0.tgz"
@@ -472,13 +457,6 @@
   integrity sha512-vuyHg81vvWA1Z1ELfvLko2c8f34gyA0zaic0+Rllc5lbCnbSyuvb2Oxpm6TAUAC/2xZN3QGqxBNggD1nNR2AfQ==
   dependencies:
     undici-types "~6.19.8"
-
-"@types/node@^20.9.0":
-  version "20.17.6"
-  resolved "https://registry.npmjs.org/@types/node/-/node-20.17.6.tgz"
-  integrity sha512-VEI7OdvK2wP7XHnsuXbAJnEpEkF6NjSN45QJlL4VGqZSXsnicpesdTWsg9RISeSdYd3yeRj/y3k5KGjUXYnFwQ==
-  dependencies:
-    undici-types "~6.19.2"
 
 "@types/responselike@^1.0.0":
   version "1.0.3"
@@ -1182,15 +1160,6 @@ electron-winstaller@^5.3.0:
   optionalDependencies:
     "@electron/windows-sign" "^1.1.2"
 
-electron@^33.2.0:
-  version "33.2.0"
-  resolved "https://registry.npmjs.org/electron/-/electron-33.2.0.tgz"
-  integrity sha512-PVw1ICAQDPsnnsmpNFX/b1i/49h67pbSPxuIENd9K9WpGO1tsRaQt+K2bmXqTuoMJsbzIc75Ce8zqtuwBPqawA==
-  dependencies:
-    "@electron/get" "^2.0.0"
-    "@types/node" "^20.9.0"
-    extract-zip "^2.0.1"
-
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz"
@@ -1351,7 +1320,7 @@ express@^4.21.1:
     utils-merge "1.0.1"
     vary "~1.1.2"
 
-extract-zip@^2.0.0, extract-zip@^2.0.1, extract-zip@2.0.1:
+extract-zip@^2.0.0, extract-zip@2.0.1:
   version "2.0.1"
   resolved "https://registry.npmjs.org/extract-zip/-/extract-zip-2.0.1.tgz"
   integrity sha512-GDhU9ntwuKyGXdZBUgTIe+vXnWj0fppUEtMDL0+idd5Sta8TGpHssn/eusA9mrPr9qNDym6SxAYZjNvCn/9RBg==
@@ -3458,7 +3427,7 @@ unbzip2-stream@1.4.3:
     buffer "^5.2.1"
     through "^2.3.8"
 
-undici-types@~6.19.2, undici-types@~6.19.8:
+undici-types@~6.19.8:
   version "6.19.8"
   resolved "https://registry.npmjs.org/undici-types/-/undici-types-6.19.8.tgz"
   integrity sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==

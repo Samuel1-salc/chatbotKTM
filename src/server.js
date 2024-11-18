@@ -10,9 +10,11 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 // Rota do chatbot
 chatbot.start();
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname,'frontend',  'index.html'));
+  res.sendFile(path.join(__dirname,'frontend',  'login.html'));
   
 });
+
+
 
 
 
