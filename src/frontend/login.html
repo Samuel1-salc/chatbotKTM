@@ -34,6 +34,7 @@
 </body>
 <script>
    document.addEventListener('DOMContentLoaded', function() {
+   
     const form = document.querySelector('form');
     const button = form.querySelector('button'); // Pega o botão "Entrar"
     
@@ -46,7 +47,8 @@
         // Verificação das credenciais (substitua com a sua lógica real)
         if (email === 'user@example.com' && password === 'password123') {
             // Redireciona para pag.html se as credenciais estiverem corretas
-            window.location.href = 'index.html';
+            window.location.href = 'pag.html';
+            
         } else {
             // Exibe um alerta em caso de credenciais incorretas
             alert('Credenciais incorretas. Por favor, tente novamente.');
