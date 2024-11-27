@@ -1,32 +1,23 @@
 function start() {
-
     console.log('iniciando');
-
-    //const { app } = require('electron');
     const qrcode = require('qrcode');
     const fs = require('fs');
     const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js'); // Mudança Buttons
-    const puppeteer = require('puppeteer');
-    const punycode = require('punycode'); // Use the punycode package from npm
-    const path = require('node:path')
     
-
-
     let client = new Client();
     const contactStates = new Map(); // Map to store state for each contact
 
     const initializeClient = () => {
-        //client.initialize();
+        client.initialize();
 
         client.on('ready', async () => {
             console.log('WhatsApp Web está pronto!');
             const message = 'Tudo certo! WhatsApp conectado.\nAgora você pode começar a usar o bot!';
-           
         });
 
         client.on('qr', qr => {
             console.log('QR Code recebido, escaneie o código abaixo');
-            qrcode.toFile('./src/frontend/private/meu_qrcode.png', qr, {
+            qrcode.toFile('./src/frontend/meu_qrcode.png', qr, {
                 width: 300,
                 margin: 4,
                 color: {
@@ -48,16 +39,10 @@ function start() {
             cleanupClient();
             client = new Client();
             initializeClient(); // Reinitialize the client
-            client.initialize();
-            
         });
-        initializeClient(); // Initialize the client for the first time
 
         // E inicializa tudo 
-        client.initialize();
-        
         const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
-        
 
         client.on('message', async (msg) => {
             const contactId = msg.from;
@@ -89,7 +74,6 @@ function start() {
                     msg.from,
                     `Olá! ${name.split(" ")[0]}, sou o assistente virtual KTM MOTORS. Como posso ajudá-lo hoje? Por favor, digite uma das opções abaixo:\n\n1 - catálogo \n2 - contato\n\n3 - sair`
                 );
-               
             } else if (state.menuDisponivel) {
                 // Se o menu estiver disponível, vamos processar as opções
                 const chat = await msg.getChat();
@@ -130,7 +114,6 @@ function start() {
                 }
 
             } else if (!state.op1) {
-                
                 if (msg.body.toLowerCase() == 'a') {
                     const media = MessageMedia.fromFilePath('./src/imagens/adamo.png');
                     await client.sendMessage(
@@ -170,15 +153,12 @@ function start() {
                     state.catalogo = true;
                     state.visibleMenu = false;
                     state.op1 = false;
-                    
-
                 }
             } else if (!state.menuDisponivel && state.op1 && state.visibleMenu) {
                 // Caso o menu não esteja disponível e o usuário tente interagir
                 await client.sendMessage(msg.from, 'Digite *menu* para poder voltar ao menu .');
                 state.visibleMenu = false;
             }
-                
 
             contactStates.set(contactId, state); // Update the state for the contact
         });
@@ -191,8 +171,9 @@ function start() {
         client.removeAllListeners('message');
     };
 
-   
-
+    initializeClient(); // Initialize the client for the first time
 }
 
-module.exports = { start };
+module.exports = {
+    start
+};
