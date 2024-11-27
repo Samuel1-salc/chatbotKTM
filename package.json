@@ -7,12 +7,12 @@
   "scripts": {
     "start": "node src/server.js"
   },
-
   "keywords": [],
   "author": "Samuel1-salc <andrade.carneiro@mail.uft.edu.br>",
   "license": "MIT",
   "dependencies": {
     "express": "^4.21.1",
+    "express-session": "^1.18.1",
     "puppeteer": "^18.2.1",
     "qrcode": "^1.5.4",
     "whatsapp-web.js": "^1.26.0"

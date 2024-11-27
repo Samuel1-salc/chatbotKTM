@@ -1,20 +1,21 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Loader</title>
+    <title>Protected Page</title>
     <link rel="stylesheet" href="./pag.css"> 
 </head>
 <body>
     <div class="container">
-        <h1>Bem-vindo ao Chatbot KTM motors!</h1>
+        <h1>Bem vindo ao chatbot KTM MOTORS</h1>
         
 
         <button id="chatbot-button">QrCode</button> <!-- Adicionei um id para facilitar -->
         <footer>
             <p>&copy; 2024 Chatbot KTM MOTORS. </p>
         </footer>
+        <a href="/"><button id="logout-button">Logout</button></a> <!-- Add ID to the logout button -->
     </div>
     
     <div id="loader" class="loading-container">
@@ -27,8 +28,6 @@
     <div id="error-message" class="error-message" style="display: none;">
         Não conseguimos carregar o QR Code. Tente novamente mais tarde.
     </div>
-    <div id="whatsapp-connect" class = "whatsapp-connect" style="display: none;" >
-        <h3>conexão bem-sucedida!</h3>
          
     <script src="./pag.js" defer></script>
     

@@ -85,7 +85,10 @@ p {
   color: #555;
 }
 
-button {
+#logout-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
   padding: 10px 20px;
   background-color: #FF6600;
   color: white;
@@ -94,7 +97,21 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+#chatbot-button {
+  padding: 10px 20px;
+  background-color: #FF6600;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+#logout-button:hover {
+  background-color: #f98131;
+}
+
+#chatbot-button:hover {
   background-color: #f98131;
 }
 

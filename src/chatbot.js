@@ -1,6 +1,4 @@
-// leitor de qr code
-
-function start(mainWindow) {
+function start() {
 
     console.log('iniciando');
 
@@ -18,147 +16,180 @@ function start(mainWindow) {
     //console.log('Caminho do aplicativo:', app.getAppPath());
 
 
-    const client = new Client();
-   
+    let client = new Client();
+    const contactStates = new Map(); // Map to store state for each contact
 
-    client.on('ready', async () => {
-        console.log('WhatsApp Web está pronto!');
-        const message = 'Tudo certo! WhatsApp conectado.\nAgora você pode começar a usar o bot!';
+    const initializeClient = () => {
+        //client.initialize();
 
-    });
-
-
-
-    // serviço de leitura do qr code
-    client.on('qr', qr => {
-        console.log('QR Code recebido, escaneie o código abaixo');
-    
-        // Gerar e salvar o QR Code como imagem
-        qrcode.toFile('./src/frontend/meu_qrcode.png', qr, {
-            width: 300,
-            margin: 4,
-            color: {
-                dark: '#000',
-                light: '#fff'
-            }
-        }, (err) => {
-            if (err) {
-                console.error('Erro ao gerar o QR Code:', err);
-            } else {
-                console.log('QR Code salvo como meu_qrcode.png');
-                // Aqui você pode adicionar mais lógica se precisar, como retornar o caminho do arquivo
-            }
+        client.on('ready', async () => {
+            console.log('WhatsApp Web está pronto!');
+            const message = 'Tudo certo! WhatsApp conectado.\nAgora você pode começar a usar o bot!';
+           
         });
-    });
 
+        client.on('qr', qr => {
+            console.log('QR Code recebido, escaneie o código abaixo');
+            qrcode.toFile('./src/frontend/private/meu_qrcode.png', qr, {
+                width: 300,
+                margin: 4,
+                color: {
+                    dark: '#000',
+                    light: '#fff'
+                }
+            }, (err) => {
+                if (err) {
+                    console.error('Erro ao gerar o QR Code:', err);
+                } else {
+                    console.log('QR Code salvo como meu_qrcode.png');
+                }
+            });
+        });
 
-    
-    client.on('ready', () => {
-        console.log('Tudo certo! WhatsApp conectado.');
-        const readyMessage = document.getElementById('whatsapp-connect');
-        readyMessage.style.display = 'block';
-
-    });
-    // E inicializa tudo 
-    client.initialize();
-
-    const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
-
-   
-
-    client.on('message', async msg => {
-       // Variável para controlar se o menu está disponível
-
-        if (
-            msg.body.match(/(menu|Menu|oi|Oi|Olá|olá|ola|Ola|Bom dia|bom dia)/) &&
-            msg.from.endsWith('@c.us')
-        ) {
-            const chat = await msg.getChat();
-            await delay(2000); // delay de 2 segundos
-            await chat.sendStateTyping(); // Simulando Digitação
-            await delay(1000); // Delay de 1 segundo
-            const contact = await msg.getContact(); // Pegando o contato
-            const name = contact.pushname; // Pegando o nome do contato
-            menuDisponivel = true; // Define o menu como disponível
-            await client.sendMessage(
-                msg.from,
-                `Olá! ${name.split(" ")[0]}, sou o assistente virtual Fama Empreendimentos. Como posso ajudá-lo hoje? Por favor, digite uma das opções abaixo:\n\n1 - Compras\n2 - Comercial/Aldeia mall\n3 - Financeiro\n4 - RH\n5 - Horário de funcionamento da empresa\n6 - Horário de funcionamento das bicicletas fama\n\n`
-            );
+        client.on('disconnected', (reason) => {
+            console.log('Cliente desconectado:', reason);
+            console.log('Tentando reconectar...');
+            cleanupClient();
+            client = new Client();
+            initializeClient(); // Reinitialize the client
+            client.initialize();
             
-        } else if (msg.body !== null && msg.from.endsWith('@c.us')) {
-            //menuDisponivel = true;
-            const chat = await msg.getChat();
-            await delay(2000);
-            await chat.sendStateTyping();
-            await delay(1000);
-        }
-             // Transforma a mensagem em minúsculo para evitar erros de digitação
-             
-            if(menuDisponivel == true){
-                console.log('Menu Debugg: true');
-            }else{
-                console.log('Menu Debugg: false');
+        });
+
+        client.on('message', async (msg) => {
+            const contactId = msg.from;
+            if (!contactStates.has(contactId)) {
+                contactStates.set(contactId, {
+                    visibleMenu: false,
+                    catalogo: true,
+                    menuDisponivel: false,
+                    op1: true
+                });
             }
-            // Define o menu como indisponível
-            
-            // Verifica o valor de menuDisponivel antes de permitir a opção 5
-       
-                // Desativa o menu após selecionar a opção
+
+            const state = contactStates.get(contactId);
+
+            // Verifica se o comando é uma saudação ou o comando de menu
+            if (
+                msg.body.match(/(menu|Menu|oi|Oi|Olá|olá|ola|Ola|Bom dia|bom dia)/) &&
+                msg.from.endsWith('@c.us') && !state.visibleMenu
+            ) {
+                const chat = await msg.getChat();
+                await delay(2000); // Delay de 2 segundos
+                await chat.sendStateTyping(); // Simulando digitação
+                await delay(1000); // Delay de 1 segundo
+                const contact = await msg.getContact(); // Pegando o contato
+                const name = contact.pushname; // Pegando o nome do contato
+                state.menuDisponivel = true; // Define o menu como disponível
+                state.visibleMenu = true;
+                await client.sendMessage(
+                    msg.from,
+                    `Olá! ${name.split(" ")[0]}, sou o assistente virtual KTM MOTORS. Como posso ajudá-lo hoje? Por favor, digite uma das opções abaixo:\n\n1 - catálogo \n2 - contato\n\n`
+                );
+                options();
+            } else if (state.menuDisponivel) {
+                // Se o menu estiver disponível, vamos processar as opções
+                const chat = await msg.getChat();
+                await delay(2000);
+                await chat.sendStateTyping();
+                await delay(1000);
+
                 switch (msg.body) {
                     case '1':
-                        await client.sendMessage(
-                            msg.from,
-                            'Você será redirecionado para o setor de *compras* após clicar no link abaixo. O responsável pelo setor, *Alexandre*, irá atendê-lo.\n\nLink do setor Compras:\nhttps://wa.me/message/3YMYLO7P2IZZI1\n\nDigite "menu" para voltar ao menu principal.'
-                        );
-                        menuDisponivel = false; // Desativa o menu após selecionar a opção
+                        await client.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
+                        await client.sendMessage(msg.from, 'Digite a letra correspondente ao modelo que deseja consultar.');
+                        state.op1 = false;
+                        state.menuDisponivel = false; // Desativa o menu após enviar as opções
+                        state.catalogo = false;
+                        state.visibleMenu = false;
                         break;
-    
+
                     case '2':
                         await client.sendMessage(
                             msg.from,
                             'Você será redirecionado para o setor *comercial* após clicar no link abaixo. Os responsáveis pelo setor, *Alessandra* ou *Kelly*, irão atendê-lo.\n\nLink: https://wa.me/message/WVH42LVUS3E6N1\n\nDigite "menu" para voltar ao menu principal.'
                         );
-                        menuDisponivel = false;
+                        state.catalogo = true;
+                        state.visibleMenu = true;
                         break;
-    
-                    case '3':
-                        await client.sendMessage(
-                            msg.from,
-                            'Você será redirecionado para o setor *financeiro* após clicar no link abaixo. A responsável pelo setor, *Tina*, irá atendê-lo.\n\nLink: https://wa.me/message/LZPMECAGSWEME1\n\nDigite "menu" para voltar ao menu principal.'
-                        );
-                        menuDisponivel = false;
+                    case 'sair':
+                        state.menuDisponivel = false; // Desativa o menu quando o usuário escolhe sair
+                        await client.sendMessage(msg.from, 'Você saiu do menu.');
                         break;
-    
-                    case '4':
-                        await client.sendMessage(
-                            msg.from,
-                            'Você será redirecionado para o setor de *RH* após clicar no link abaixo. A responsável pelo setor, *Simone*, irá atendê-lo.\n\nLink: https://wa.me/message/X2I3KJCENP6EI1\n\nDigite "menu" para voltar ao menu principal.'
-                        );
-                        menuDisponivel = false;
-                        break;
-    
-                    case '5':
-                        await client.sendMessage(
-                            msg.from,
-                            'Horário de funcionamento da empresa:\n\nSegunda a sexta-feira: 08:00 às 18:00\nSábado: 08:00 às 12:00\n\nDigite "menu" para voltar ao menu principal.'
-                        );
-                        menuDisponivel = false;
-                        break;
-    
-                    case '6':
-                        await client.sendMessage(
-                            msg.from,
-                            'Horário de funcionamento das bicicletas na graciosa:\n\nApenas aos sábados e domingos\n18:00 às 22:00\n\nDigite "menu" para voltar ao menu principal.'
-                        );
-                        menuDisponivel = false;
+                    default:
+                        await client.sendMessage(msg.from, 'Opção inválida. Por favor, escolha uma opção válida ou digite "sair" para sair do menu.');
                         break;
                 }
-            
-        
 
-    });
+            } else if (!state.op1) {
+                
+                if (msg.body.toLowerCase() == 'a') {
+                    const media = MessageMedia.fromFilePath('./src/imagens/adamo.png');
+                    await client.sendMessage(
+                        msg.from, media, { caption:
+                            '*2025 KTM 250 SX-F ADAMO EDITION*\n\n*DETALHES TÉCNICOS:*\n*Transmissão:* 5 velocidades\n\n*Motor de partida:* Elétrico\n\n*Peso (sem combustível):* 102,5 kg\n\n*Elevação:* 48,5 mm\n\n*Embreagem:* Wet multi-disc DS clutch, Brembo hydraulics\n\n*Capacidade do tanque:* 7,2 L\n\n*Orifício:* 81 mm\nMais sobre ela no nosso site: https://www.ktm.com/pt-br/models/motocross/4-stroke/2025-ktm-250-sx-fadamoedition.html\n\n para voltar ao catalogo digite: *catálogo*'
+                    });
+                    state.catalogo = false;
+                    state.visibleMenu = false;
+                    //state.menuDisponivel = true;
+                }
+
+                if (msg.body.toLowerCase() == 'b') {
+                    const media = MessageMedia.fromFilePath('./src/imagens/2023.png');
+                    await client.sendMessage(
+                        msg.from, media, { caption:
+                            '*KTM 250 SX-F 2023*\n\n*DETALHES TÉCNICOS:*\n*Transmissão:* 5 velocidades\n\n*Motor de partida:* Elétrico\n\n*Peso (sem combustível):* 101kg\n\n*Elevação:* 48,5 mm\n\n*Embreagem:* Wet multi-disc DS clutch, Brembo hydraulics\n\n*Capacidade do tanque:* 7,2 L\n\n*Orifício:* 81 mm\nMais sobre ela no nosso site: https://www.ktm.com/pt-br/models/motocross/4-stroke/ktm-250-sx-f-2023.html\n\n para voltar ao catalogo digite: *catálogo* '
+                    });
+                    state.catalogo = false;
+                    state.visibleMenu = false;
+                    //state.menuDisponivel = true;
+                }
+
+                if (msg.body.toLowerCase() == 'c') {
+                    const media = MessageMedia.fromFilePath('./src/imagens/sx.png');
+                    await client.sendMessage(
+                        msg.from, media, { caption:
+                            '*2025 KTM 150 SX*\n\n*DETALHES TÉCNICOS:*\n*Transmissão:* 5 velocidades\n\n*Motor de partida:* Elétrico\n\n*Peso (sem combustível):* 101kg\n\n*Elevação:* 48,5 mm\n\n*Embreagem:* Wet multi-disc DS clutch, Brembo hydraulics\n\n*Capacidade do tanque:* 7,2 L\n\n*Orifício:* 81 mm\nMais sobre ela no nosso site: https://www.ktm.com/pt-br/models/motocross/4-stroke/ktm-250-sx-f-2023.html\n\n para voltar ao catalogo digite: *catálogo* '
+                    });
+                    state.catalogo = false;
+                    state.visibleMenu = false;
+                    //state.menuDisponivel = true;
+                }
+                state.op1 = true;
+            } else if (!state.catalogo) {
+                if (msg.body.match(/(catalogo|Catalogo)/)) {
+                    await client.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
+                    state.catalogo = true;
+                    state.visibleMenu = false;
+                }
+            } else if (!state.menuDisponivel && state.op1 && state.visibleMenu) {
+                // Caso o menu não esteja disponível e o usuário tente interagir
+                await client.sendMessage(msg.from, 'Digite "menu" para acessar as opções .');
+                state.visibleMenu = false;
+            }
+
+            contactStates.set(contactId, state); // Update the state for the contact
+        });
+    };
+
+    const cleanupClient = () => {
+        client.removeAllListeners('ready');
+        client.removeAllListeners('qr');
+        client.removeAllListeners('disconnected');
+        client.removeAllListeners('message');
+    };
+
+    initializeClient(); // Initialize the client for the first time
+
+    // E inicializa tudo 
+    client.initialize();
     
+    const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
     
 
+    function options(ok) {
+       console.log('options');
+    }
 }
+
 module.exports = { start };

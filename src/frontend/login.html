@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KTM Motors Login</title>
+    <title>Login</title>
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
@@ -12,18 +12,18 @@
             <img src="Desktop.ico" alt="KTM Logo">
         </div>
         <div class="login-box">
-            <h1>Login KTM Motors</h1>
+            <h1>Login</h1>
             <p>Entre com suas credenciais para acessar</p>
-            <form action="#" method="post">
+            <form action="/login" method="post">
                 <div class="input-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="seu@email.com" required>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
                 </div>
                 <div class="input-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" required>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
                 </div>
-                <button type="submit">Entrar</button>
+                <button type="submit">Login</button>
             </form>
             <p><a href="#">Esqueceu sua senha?</a></p>
         </div>
@@ -32,29 +32,4 @@
         </div>
     </div>
 </body>
-<script>
-   document.addEventListener('DOMContentLoaded', function() {
-   
-    const form = document.querySelector('form');
-    const button = form.querySelector('button'); // Pega o botão "Entrar"
-    
-    button.addEventListener('click', function(e) {
-        e.preventDefault(); // Impede o envio padrão do formulário ao clicar no botão
-
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        // Verificação das credenciais (substitua com a sua lógica real)
-        if (email === 'user@example.com' && password === 'password123') {
-            // Redireciona para pag.html se as credenciais estiverem corretas
-            window.location.href = 'pag.html';
-            
-        } else {
-            // Exibe um alerta em caso de credenciais incorretas
-            alert('Credenciais incorretas. Por favor, tente novamente.');
-        }
-    });
-});
-
-    </script>
 </html>
