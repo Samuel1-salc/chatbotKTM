@@ -84,7 +84,7 @@ function start() {
                 state.visibleMenu = true;
                 await client.sendMessage(
                     msg.from,
-                    `Olá! ${name.split(" ")[0]}, sou o assistente virtual KTM MOTORS. Como posso ajudá-lo hoje? Por favor, digite uma das opções abaixo:\n\n1 - catálogo \n2 - contato\n\n`
+                    `Olá! ${name.split(" ")[0]}, sou o assistente virtual KTM MOTORS. Como posso ajudá-lo hoje? Por favor, digite uma das opções abaixo:\n\n1 - catálogo \n2 - contato\n\n3 - sair`
                 );
                
             } else if (state.menuDisponivel) {
@@ -109,12 +109,17 @@ function start() {
                             msg.from,
                             'Você será redirecionado para o setor *comercial* após clicar no link abaixo. Os responsáveis pelo setor, *Alessandra* ou *Kelly*, irão atendê-lo.\n\nLink: https://wa.me/message/WVH42LVUS3E6N1\n\nDigite "menu" para voltar ao menu principal.'
                         );
+                        state.op1 = true;
+                        state.menuDisponivel = false; 
                         state.catalogo = true;
-                        state.visibleMenu = true;
+                        state.visibleMenu = false;
                         break;
-                    case 'sair':
+                    case '3':
+                        state.op1 = true;
                         state.menuDisponivel = false; // Desativa o menu quando o usuário escolhe sair
-                        await client.sendMessage(msg.from, 'Você saiu do menu.');
+                        state.visibleMenu = true;
+                        state.catalogo = true;
+                        //await client.sendMessage(msg.from, 'Você saiu do menu.');
                         break;
                     default:
                         await client.sendMessage(msg.from, 'Opção inválida. Por favor, escolha uma opção válida ou digite "sair" para sair do menu.');
@@ -157,16 +162,20 @@ function start() {
                 }
                 state.op1 = true;
             } else if (!state.catalogo) {
-                if (msg.body.match(/(catalogo|Catalogo)/)) {
+                if (msg.body.match(/(catalogo|Catalogo|catálogo)/)) {
                     await client.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
                     state.catalogo = true;
                     state.visibleMenu = false;
+                    state.op1 = false;
+                    
+
                 }
             } else if (!state.menuDisponivel && state.op1 && state.visibleMenu) {
                 // Caso o menu não esteja disponível e o usuário tente interagir
-                await client.sendMessage(msg.from, 'Digite "menu" para acessar as opções .');
+                await client.sendMessage(msg.from, 'Digite *menu* para poder voltar ao menu .');
                 state.visibleMenu = false;
             }
+                
 
             contactStates.set(contactId, state); // Update the state for the contact
         });
