@@ -7,13 +7,9 @@ function start() {
     const fs = require('fs');
     const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js'); // Mudança Buttons
     const puppeteer = require('puppeteer');
-    //const chromeFinder = require('chrome-finder');
+    const punycode = require('punycode'); // Use the punycode package from npm
     const path = require('node:path')
-    //const appPath = app.getAppPath();
-    //const qrPath = path.join(appPath, '../', 'qr.png');
-    //console.log(qrPath);
-   // const chromePath = chromeFinder(); // Encontra o caminho do Chrome ou Chromium no seu sistema
-    //console.log('Caminho do aplicativo:', app.getAppPath());
+    
 
 
     let client = new Client();
@@ -55,6 +51,13 @@ function start() {
             client.initialize();
             
         });
+        initializeClient(); // Initialize the client for the first time
+
+        // E inicializa tudo 
+        client.initialize();
+        
+        const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
+        
 
         client.on('message', async (msg) => {
             const contactId = msg.from;
@@ -188,13 +191,7 @@ function start() {
         client.removeAllListeners('message');
     };
 
-    initializeClient(); // Initialize the client for the first time
-
-    // E inicializa tudo 
-    client.initialize();
-    
-    const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
-    
+   
 
 }
 
