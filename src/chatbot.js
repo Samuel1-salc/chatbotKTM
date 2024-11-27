@@ -86,7 +86,7 @@ function start() {
                     msg.from,
                     `Olá! ${name.split(" ")[0]}, sou o assistente virtual KTM MOTORS. Como posso ajudá-lo hoje? Por favor, digite uma das opções abaixo:\n\n1 - catálogo \n2 - contato\n\n`
                 );
-                options();
+               
             } else if (state.menuDisponivel) {
                 // Se o menu estiver disponível, vamos processar as opções
                 const chat = await msg.getChat();
@@ -187,9 +187,6 @@ function start() {
     const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
     
 
-    function options(ok) {
-       console.log('options');
-    }
 }
 
 module.exports = { start };
