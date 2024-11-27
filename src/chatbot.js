@@ -1,21 +1,27 @@
-function start() {
+const { MongoClient } = require('mongodb');
+const qrcode = require('qrcode');
+const fs = require('fs');
+const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js');
+
+const uri = 'your_mongodb_connection_string';
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+async function start() {
     console.log('iniciando');
-    const qrcode = require('qrcode');
-    const fs = require('fs');
-    const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js'); // Mudança Buttons
-    
-    let client = new Client();
-    const contactStates = new Map(); // Map to store state for each contact
+    await client.connect();
+    const db = client.db('chatbot');
+    const contactStatesCollection = db.collection('contactStates');
+
+    let whatsappClient = new Client();
 
     const initializeClient = () => {
-        client.initialize();
+        whatsappClient.initialize();
 
-        client.on('ready', async () => {
+        whatsappClient.on('ready', async () => {
             console.log('WhatsApp Web está pronto!');
-            const message = 'Tudo certo! WhatsApp conectado.\nAgora você pode começar a usar o bot!';
         });
 
-        client.on('qr', qr => {
+        whatsappClient.on('qr', qr => {
             console.log('QR Code recebido, escaneie o código abaixo');
             qrcode.toFile('./src/frontend/meu_qrcode.png', qr, {
                 width: 300,
@@ -33,29 +39,30 @@ function start() {
             });
         });
 
-        client.on('disconnected', (reason) => {
+        whatsappClient.on('disconnected', (reason) => {
             console.log('Cliente desconectado:', reason);
             console.log('Tentando reconectar...');
             cleanupClient();
-            client = new Client();
+            whatsappClient = new Client();
             initializeClient(); // Reinitialize the client
         });
 
-        // E inicializa tudo 
         const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
 
-        client.on('message', async (msg) => {
+        whatsappClient.on('message', async (msg) => {
             const contactId = msg.from;
-            if (!contactStates.has(contactId)) {
-                contactStates.set(contactId, {
+            let state = await contactStatesCollection.findOne({ contactId });
+
+            if (!state) {
+                state = {
+                    contactId,
                     visibleMenu: false,
                     catalogo: true,
                     menuDisponivel: false,
                     op1: true
-                });
+                };
+                await contactStatesCollection.insertOne(state);
             }
-
-            const state = contactStates.get(contactId);
 
             // Verifica se o comando é uma saudação ou o comando de menu
             if (
@@ -70,7 +77,7 @@ function start() {
                 const name = contact.pushname; // Pegando o nome do contato
                 state.menuDisponivel = true; // Define o menu como disponível
                 state.visibleMenu = true;
-                await client.sendMessage(
+                await whatsappClient.sendMessage(
                     msg.from,
                     `Olá! ${name.split(" ")[0]}, sou o assistente virtual KTM MOTORS. Como posso ajudá-lo hoje? Por favor, digite uma das opções abaixo:\n\n1 - catálogo \n2 - contato\n\n3 - sair`
                 );
@@ -83,8 +90,8 @@ function start() {
 
                 switch (msg.body) {
                     case '1':
-                        await client.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
-                        await client.sendMessage(msg.from, 'Digite a letra correspondente ao modelo que deseja consultar.');
+                        await whatsappClient.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
+                        await whatsappClient.sendMessage(msg.from, 'Digite a letra correspondente ao modelo que deseja consultar.');
                         state.op1 = false;
                         state.menuDisponivel = false; // Desativa o menu após enviar as opções
                         state.catalogo = false;
@@ -92,7 +99,7 @@ function start() {
                         break;
 
                     case '2':
-                        await client.sendMessage(
+                        await whatsappClient.sendMessage(
                             msg.from,
                             'Você será redirecionado para o setor *comercial* após clicar no link abaixo. Os responsáveis pelo setor, *Alessandra* ou *Kelly*, irão atendê-lo.\n\nLink: https://wa.me/message/WVH42LVUS3E6N1\n\nDigite "menu" para voltar ao menu principal.'
                         );
@@ -106,17 +113,17 @@ function start() {
                         state.menuDisponivel = false; // Desativa o menu quando o usuário escolhe sair
                         state.visibleMenu = true;
                         state.catalogo = true;
-                        //await client.sendMessage(msg.from, 'Você saiu do menu.');
+                        //await whatsappClient.sendMessage(msg.from, 'Você saiu do menu.');
                         break;
                     default:
-                        await client.sendMessage(msg.from, 'Opção inválida. Por favor, escolha uma opção válida ou digite "sair" para sair do menu.');
+                        await whatsappClient.sendMessage(msg.from, 'Opção inválida. Por favor, escolha uma opção válida ou digite "sair" para sair do menu.');
                         break;
                 }
 
             } else if (!state.op1) {
                 if (msg.body.toLowerCase() == 'a') {
                     const media = MessageMedia.fromFilePath('./src/imagens/adamo.png');
-                    await client.sendMessage(
+                    await whatsappClient.sendMessage(
                         msg.from, media, { caption:
                             '*2025 KTM 250 SX-F ADAMO EDITION*\n\n*DETALHES TÉCNICOS:*\n*Transmissão:* 5 velocidades\n\n*Motor de partida:* Elétrico\n\n*Peso (sem combustível):* 102,5 kg\n\n*Elevação:* 48,5 mm\n\n*Embreagem:* Wet multi-disc DS clutch, Brembo hydraulics\n\n*Capacidade do tanque:* 7,2 L\n\n*Orifício:* 81 mm\nMais sobre ela no nosso site: https://www.ktm.com/pt-br/models/motocross/4-stroke/2025-ktm-250-sx-fadamoedition.html\n\n para voltar ao catalogo digite: *catálogo*'
                     });
@@ -127,7 +134,7 @@ function start() {
 
                 if (msg.body.toLowerCase() == 'b') {
                     const media = MessageMedia.fromFilePath('./src/imagens/2023.png');
-                    await client.sendMessage(
+                    await whatsappClient.sendMessage(
                         msg.from, media, { caption:
                             '*KTM 250 SX-F 2023*\n\n*DETALHES TÉCNICOS:*\n*Transmissão:* 5 velocidades\n\n*Motor de partida:* Elétrico\n\n*Peso (sem combustível):* 101kg\n\n*Elevação:* 48,5 mm\n\n*Embreagem:* Wet multi-disc DS clutch, Brembo hydraulics\n\n*Capacidade do tanque:* 7,2 L\n\n*Orifício:* 81 mm\nMais sobre ela no nosso site: https://www.ktm.com/pt-br/models/motocross/4-stroke/ktm-250-sx-f-2023.html\n\n para voltar ao catalogo digite: *catálogo* '
                     });
@@ -138,7 +145,7 @@ function start() {
 
                 if (msg.body.toLowerCase() == 'c') {
                     const media = MessageMedia.fromFilePath('./src/imagens/sx.png');
-                    await client.sendMessage(
+                    await whatsappClient.sendMessage(
                         msg.from, media, { caption:
                             '*2025 KTM 150 SX*\n\n*DETALHES TÉCNICOS:*\n*Transmissão:* 5 velocidades\n\n*Motor de partida:* Elétrico\n\n*Peso (sem combustível):* 101kg\n\n*Elevação:* 48,5 mm\n\n*Embreagem:* Wet multi-disc DS clutch, Brembo hydraulics\n\n*Capacidade do tanque:* 7,2 L\n\n*Orifício:* 81 mm\nMais sobre ela no nosso site: https://www.ktm.com/pt-br/models/motocross/4-stroke/ktm-250-sx-f-2023.html\n\n para voltar ao catalogo digite: *catálogo* '
                     });
@@ -149,26 +156,26 @@ function start() {
                 state.op1 = true;
             } else if (!state.catalogo) {
                 if (msg.body.match(/(catalogo|Catalogo|catálogo)/)) {
-                    await client.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
+                    await whatsappClient.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
                     state.catalogo = true;
                     state.visibleMenu = false;
                     state.op1 = false;
                 }
             } else if (!state.menuDisponivel && state.op1 && state.visibleMenu) {
                 // Caso o menu não esteja disponível e o usuário tente interagir
-                await client.sendMessage(msg.from, 'Digite *menu* para poder voltar ao menu .');
+                await whatsappClient.sendMessage(msg.from, 'Digite *menu* para poder voltar ao menu .');
                 state.visibleMenu = false;
             }
 
-            contactStates.set(contactId, state); // Update the state for the contact
+            await contactStatesCollection.updateOne({ contactId }, { $set: state });
         });
     };
 
     const cleanupClient = () => {
-        client.removeAllListeners('ready');
-        client.removeAllListeners('qr');
-        client.removeAllListeners('disconnected');
-        client.removeAllListeners('message');
+        whatsappClient.removeAllListeners('ready');
+        whatsappClient.removeAllListeners('qr');
+        whatsappClient.removeAllListeners('disconnected');
+        whatsappClient.removeAllListeners('message');
     };
 
     initializeClient(); // Initialize the client for the first time

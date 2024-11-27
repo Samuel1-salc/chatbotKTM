@@ -2,13 +2,12 @@ const express = require('express');
 const path = require('path');
 const chatbot = require('./chatbot'); 
 const app = express();
-const bodyParser = require('body-parser'); // Add body-parser
 
 const port = 3000;
 
-// Use body-parser middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// Use Express built-in middleware  
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'frontend')));
 // Rota do chatbot
