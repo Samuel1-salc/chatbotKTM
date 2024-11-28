@@ -35,12 +35,7 @@ function start() {
 
     const initializeClient = () => {
         console.log('iniciando3');
-        client.initialize();
-
-        client.on('ready', async () => {
-            console.log('WhatsApp Web está pronto!');
-            const message = 'Tudo certo! WhatsApp conectado.\nAgora você pode começar a usar o bot!';
-        });
+        
 
         client.on('qr', qr => {
             console.log('QR Code recebido, escaneie o código abaixo');
@@ -59,6 +54,13 @@ function start() {
                 }
             });
         });
+        
+        client.on('ready', async () => {
+            console.log('WhatsApp Web está pronto!');
+           
+        });
+        client.initialize();
+        
 
         client.on('authenticated', () => {
             console.log('Cliente autenticado!');
