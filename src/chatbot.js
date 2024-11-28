@@ -102,12 +102,7 @@ function start() {
             const debugWWebVersion = await client.getWWebVersion();
             console.log(`WWebVersion = ${debugWWebVersion}`);
         
-            client.pupPage.on('pageerror', function(err) {
-                console.log('Page error: ' + err.toString());
-            });
-            client.pupPage.on('error', function(err) {
-                console.log('Page error: ' + err.toString());
-            });
+
             client.pupPage.on('crash', function() {
                 console.error('Page crashed! Reinitializing client...');
                 client.destroy().then(() => client.initialize());
