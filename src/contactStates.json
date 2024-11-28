@@ -1,8 +1,14 @@
 {
-  "556381129950@c.us": {
-    "visibleMenu": true,
+  "status@broadcast": {
+    "visibleMenu": false,
+    "catalogo": true,
+    "menuDisponivel": false,
+    "op1": true
+  },
+  "556384570444@c.us": {
+    "visibleMenu": false,
     "catalogo": false,
-    "menuDisponivel": true,
+    "menuDisponivel": false,
     "op1": false
   }
 }

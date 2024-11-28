@@ -22,7 +22,6 @@ const loadStates = () => {
 const saveStates = (states) => {
     try {
         fs.writeFileSync(stateFilePath, JSON.stringify(states, null, 2));
-        console.log('Estados salvos com sucesso!');
     } catch (err) {
         console.error('Erro ao salvar o estado:', err);
     }
@@ -133,7 +132,7 @@ function start() {
             };
         }
        // Remove the user's information
-        console.log('2');
+        console.log("msg do usuario:", contactId,"msg:", msg.body);
 
         const state = contactStates[contactId];
 
