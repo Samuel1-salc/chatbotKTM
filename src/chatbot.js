@@ -42,7 +42,7 @@ function start() {
     console.log('iniciando');
     clearStates(); // Clear states at the start
     const qrcode = require('qrcode');
-    const { Client, Buttons, List, MessageMedia,LocalAuth } = require('whatsapp-web.js'); // Mudança Buttons
+    const { Client, Buttons, List, MessageMedia,RemoteAuth } = require('whatsapp-web.js'); // Mudança Buttons
     
   
     let contactStates = loadStates(); // Load states from the JSON file
@@ -108,6 +108,10 @@ function start() {
             client.pupPage.on('error', function(err) {
                 console.log('Page error: ' + err.toString());
             });
+            client.pupPage.on('crash', function() {
+                console.error('Page crashed! Reinitializing client...');
+                client.destroy().then(() => client.initialize());
+            });
             
         });
 
@@ -162,8 +166,8 @@ function start() {
 
             switch (msg.body) {
                 case '1':
-                    await client.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
-                    await client.sendMessage(msg.from, 'Digite a letra correspondente ao modelo que deseja consultar.');
+                     client.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
+                     client.sendMessage(msg.from, 'Digite a letra correspondente ao modelo que deseja consultar.');
                     state.op1 = false;
                     state.menuDisponivel = false; // Desativa o menu após enviar as opções
                     state.catalogo = false;
@@ -171,7 +175,7 @@ function start() {
                     break;
 
                 case '2':
-                    await client.sendMessage(
+                    client.sendMessage(
                         msg.from,
                         'Você será redirecionado para o setor *comercial* após clicar no link abaixo. Os responsáveis pelo setor, *Alessandra* ou *Kelly*, irão atendê-lo.\n\nLink: https://wa.me/message/WVH42LVUS3E6N1\n\nDigite "menu" para voltar ao menu principal.'
                     );
@@ -187,10 +191,10 @@ function start() {
                     state.menuDisponivel = false; // Desativa o menu quando o usuário escolhe sair
                     state.visibleMenu = true;
                     state.catalogo = true;
-                    await client.sendMessage(msg.from, 'Você saiu do menu e suas informações foram removidas.');
+                    client.sendMessage(msg.from, 'Você saiu do menu e suas informações foram removidas.');
                     break;
                 default:
-                    await client.sendMessage(msg.from, 'Opção inválida. Por favor, escolha uma opção válida ou digite "sair" para sair do menu.');
+                    client.sendMessage(msg.from, 'Opção inválida. Por favor, escolha uma opção válida ou digite "sair" para sair do menu.');
                     break;
             }
 
@@ -198,7 +202,7 @@ function start() {
             
             if (msg.body.toLowerCase() == 'a') {
                 const media = MessageMedia.fromFilePath('./src/imagens/adamo.png');
-                await client.sendMessage(
+                 client.sendMessage(
                     msg.from, media, { caption:
                         '*2025 KTM 250 SX-F ADAMO EDITION*\n\n*DETALHES TÉCNICOS:*\n*Transmissão:* 5 velocidades\n\n*Motor de partida:* Elétrico\n\n*Peso (sem combustível):* 102,5 kg\n\n*Elevação:* 48,5 mm\n\n*Embreagem:* Wet multi-disc DS clutch, Brembo hydraulics\n\n*Capacidade do tanque:* 7,2 L\n\n*Orifício:* 81 mm\nMais sobre ela no nosso site: https://www.ktm.com/pt-br/models/motocross/4-stroke/2025-ktm-250-sx-fadamoedition.html\n\n para voltar ao catalogo digite: *catálogo*'
                 });
@@ -209,7 +213,7 @@ function start() {
 
             if (msg.body.toLowerCase() == 'b') {
                 const media = MessageMedia.fromFilePath('./src/imagens/2023.png');
-                await client.sendMessage(
+                 client.sendMessage(
                     msg.from, media, { caption:
                         '*KTM 250 SX-F 2023*\n\n*DETALHES TÉCNICOS:*\n*Transmissão:* 5 velocidades\n\n*Motor de partida:* Elétrico\n\n*Peso (sem combustível):* 101kg\n\n*Elevação:* 48,5 mm\n\n*Embreagem:* Wet multi-disc DS clutch, Brembo hydraulics\n\n*Capacidade do tanque:* 7,2 L\n\n*Orifício:* 81 mm\nMais sobre ela no nosso site: https://www.ktm.com/pt-br/models/motocross/4-stroke/ktm-250-sx-f-2023.html\n\n para voltar ao catalogo digite: *catálogo* '
                 });
@@ -220,7 +224,7 @@ function start() {
 
             if (msg.body.toLowerCase() == 'c') {
                 const media = MessageMedia.fromFilePath('./src/imagens/sx.png');
-                await client.sendMessage(
+                 client.sendMessage(
                     msg.from, media, { caption:
                         '*2025 KTM 150 SX*\n\n*DETALHES TÉCNICOS:*\n*Transmissão:* 5 velocidades\n\n*Motor de partida:* Elétrico\n\n*Peso (sem combustível):* 101kg\n\n*Elevação:* 48,5 mm\n\n*Embreagem:* Wet multi-disc DS clutch, Brembo hydraulics\n\n*Capacidade do tanque:* 7,2 L\n\n*Orifício:* 81 mm\nMais sobre ela no nosso site: https://www.ktm.com/pt-br/models/motocross/4-stroke/ktm-250-sx-f-2023.html\n\n para voltar ao catalogo digite: *catálogo* '
                 });
@@ -231,14 +235,14 @@ function start() {
             state.op1 = true;
         } else if (!state.catalogo) {
             if (msg.body.match(/(catalogo|Catalogo|catálogo)/)) {
-                await client.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
+                client.sendMessage(msg.from, '*Catalogo:*\n\n A - 2025 KTM 250 SX-F ADAMO EDITION\n\n B - KTM 250 SX-F 2023\n\n C - 2025 KTM 150 SX\n\n para voltar ao menu digite *menu*');
                 state.catalogo = true;
                 state.visibleMenu = false;
                 state.op1 = false;
             }
         } else if (!state.menuDisponivel && state.op1 && state.visibleMenu) {
             // Caso o menu não esteja disponível e o usuário tente interagir
-            await client.sendMessage(msg.from, 'Digite *menu* para poder voltar ao menu .');
+            client.sendMessage(msg.from, 'Digite *menu* para poder voltar ao menu .');
             state.visibleMenu = false;
         }
 
