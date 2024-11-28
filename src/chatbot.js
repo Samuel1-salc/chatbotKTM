@@ -42,13 +42,20 @@ function start() {
     console.log('iniciando');
     clearStates(); // Clear states at the start
     const qrcode = require('qrcode');
-    const { Client, Buttons, List, MessageMedia,RemoteAuth } = require('whatsapp-web.js'); // Mudança Buttons
+    const { Client, Buttons, List, MessageMedia,LocalAuth } = require('whatsapp-web.js'); // Mudança Buttons
     
   
     let contactStates = loadStates(); // Load states from the JSON file
     console.log('iniciando2');
 
-    const client = new Client
+    const client = new Client({
+        authStrategy: new LocalAuth(),
+        // proxyAuthentication: { username: 'username', password: 'password' },
+        puppeteer: { 
+            // args: ['--proxy-server=proxy-server-that-requires-authentication.example.com'],
+            headless: false,
+        }
+    });
     
     // client initialize does not finish at ready now.
     client.initialize();
