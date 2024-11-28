@@ -96,6 +96,14 @@ p {
   border-radius: 5px;
   cursor: pointer;
 }
+#startChatbotButton{
+  padding: 10px 20px;
+  background-color: #FF6600;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
 #chatbot-button {
   padding: 10px 20px;

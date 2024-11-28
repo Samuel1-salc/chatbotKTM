@@ -1,32 +1,8 @@
 {
-  "status@broadcast": {
-    "visibleMenu": false,
-    "catalogo": true,
-    "menuDisponivel": false,
-    "op1": true
-  },
-  "556381129950@c.us": {
-    "visibleMenu": false,
+  "[object Object]": {
+    "visibleMenu": true,
     "catalogo": false,
-    "menuDisponivel": false,
-    "op1": true
-  },
-  "556385044054@c.us": {
-    "visibleMenu": false,
-    "catalogo": false,
-    "menuDisponivel": false,
-    "op1": true
-  },
-  "556384843220@c.us": {
-    "visibleMenu": false,
-    "catalogo": true,
-    "menuDisponivel": false,
-    "op1": true
-  },
-  "556384914310-1592489801@g.us": {
-    "visibleMenu": false,
-    "catalogo": true,
-    "menuDisponivel": false,
+    "menuDisponivel": true,
     "op1": true
   }
 }

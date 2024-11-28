@@ -12,6 +12,7 @@
         
 
         <button id="chatbot-button">QrCode</button> <!-- Adicionei um id para facilitar -->
+        <button id="startChatbotButton">Iniciar Chatbot</button>
         <footer>
             <p>&copy; 2024 Chatbot KTM MOTORS. </p>
         </footer>
@@ -29,7 +30,26 @@
         Não conseguimos carregar o QR Code. Tente novamente mais tarde.
     </div>
          
+    
     <script src="./pag.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('startChatbotButton').addEventListener('click', () => {
+                fetch('/start-chatbot', {
+                    method: 'POST'
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    alert('Chatbot iniciado');
+                })
+                .catch(error => {
+                    console.error('Erro ao iniciar o chatbot:', error);
+                    alert('Erro ao iniciar o chatbot');
+                });
+            });
+        });
+    </script>
     
     
 </body>

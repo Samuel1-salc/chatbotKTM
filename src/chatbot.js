@@ -10,7 +10,6 @@ const loadStates = () => {
         try {
             const data = fs.readFileSync(stateFilePath, 'utf8');
             return data ? JSON.parse(data) : {};
-            console.log('Estados carregados com sucesso!');
         } catch (err) {
             console.error('Erro ao carregar o estado:', err);
             return {};
@@ -21,23 +20,54 @@ const loadStates = () => {
 
 // Save states to the JSON file
 const saveStates = (states) => {
-    fs.writeFileSync(stateFilePath, JSON.stringify(states, null, 2));
+    try {
+        fs.writeFileSync(stateFilePath, JSON.stringify(states, null, 2));
+        console.log('Estados salvos com sucesso!');
+    } catch (err) {
+        console.error('Erro ao salvar o estado:', err);
+    }
+};
+
+// Clear states in the JSON file
+const clearStates = () => {
+    try {
+        fs.writeFileSync(stateFilePath, JSON.stringify({}, null, 2));
+        console.log('Estados limpos com sucesso!');
+    } catch (err) {
+        console.error('Erro ao limpar os estados:', err);
+    }
 };
 
 function start() {
-    console.log('iniciando');
-    const qrcode = require('qrcode');
-    const { Client, Buttons, List, MessageMedia } = require('whatsapp-web.js'); // Mudança Buttons
     
-    let client = new Client();
+    console.log('iniciando');
+    clearStates(); // Clear states at the start
+    const qrcode = require('qrcode');
+    const { Client, Buttons, List, MessageMedia,LocalAuth } = require('whatsapp-web.js'); // Mudança Buttons
+    
+  
     let contactStates = loadStates(); // Load states from the JSON file
     console.log('iniciando2');
 
-  
-        console.log('iniciando3');
+    const client = new Client({
+        authStrategy: new LocalAuth(),
+        puppeteer: { 
+            headless: false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        }
+    });
+    
+    // client initialize does not finish at ready now.
+    client.initialize();
         
-
-        client.on('qr', qr => {
+        client.on('loading_screen', (percent, message) => {
+            console.log('LOADING SCREEN', percent, message);
+        });
+        
+        // Pairing code only needs to be requested once
+        let pairingCodeRequested = false;
+        client.on('qr', async (qr) => {
+            // NOTE: This event will not be fired if a session is specified.
             console.log('QR Code recebido, escaneie o código abaixo');
             qrcode.toFile('./src/frontend/meu_qrcode.png', qr, {
                 width: 300,
@@ -53,49 +83,51 @@ function start() {
                     console.log('QR Code salvo como meu_qrcode.png');
                 }
             });
+        
+            // paiuting code example
+            const pairingCodeEnabled = false;
+            if (pairingCodeEnabled && !pairingCodeRequested) {
+                const pairingCode = await client.requestPairingCode(''); // enter the target phone number
+                console.log('Pairing code enabled, code: '+ pairingCode);
+                pairingCodeRequested = true;
+            }
         });
-        client.on('loading_screen', () => {
-            console.log('Carregando tela...');
+        
+        client.on('authenticated', () => {
+            console.log('AUTHENTICATED');
+        });
+        
+        client.on('auth_failure', msg => {
+            // Fired if session restore was l
+            console.error('AUTHENTICATION FAILURE', msg);
         });
         
         client.on('ready', async () => {
-            console.log('WhatsApp Web is ready!');
-           
-        });
-        client.initialize();
+            console.log('READY');
+            const debugWWebVersion = await client.getWWebVersion();
+            console.log(`WWebVersion = ${debugWWebVersion}`);
         
-
-        client.on('authenticated', () => {
-            console.log('Cliente autenticado!');
-        });
-
-        client.on('auth_failure', msg => {
-            console.error('Falha na autenticação', msg);
+            client.pupPage.on('pageerror', function(err) {
+                console.log('Page error: ' + err.toString());
+            });
+            client.pupPage.on('error', function(err) {
+                console.log('Page error: ' + err.toString());
+            });
+            
         });
 
         client.on('disconnected', (reason) => {
-            console.log('Cliente desconectado:', reason);
-            console.log('Tentando reconectar...');
-            cleanupClient();
-            client = new Client();
-            initializeClient(); // Reinitialize the client
+            console.log('Client was logged out', reason);
+            client.initialize(); // Reinitialize the client on disconnect
         });
-
-        const cleanupClient = () => {
-            client.removeAllListeners('ready');
-            client.removeAllListeners('qr');
-            client.removeAllListeners('disconnected');
-            client.removeAllListeners('message');
-        };
-
-        console.log('iniciando4');
+        
     
-    //initializeClient(); // Initialize the client for the first time
 
     const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
-
+    
     client.on('message', async (msg) => {
-        const contactId = msg.from;
+        
+        const contactId = msg.from; // Load states from the JSON file
         if (!contactStates[contactId]) {
             contactStates[contactId] = {
                 visibleMenu: false,
@@ -104,7 +136,8 @@ function start() {
                 op1: true
             };
         }
-        console.log('Mensagem recebida de', contactId, 'com o conteúdo:', msg.body);
+       // Remove the user's information
+        console.log('2');
 
         const state = contactStates[contactId];
 

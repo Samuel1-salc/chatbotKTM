@@ -19,6 +19,12 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname,'frontend',  'login.html')); // Use sendFile instead of render
 });
 
+// Adicione uma nova rota para iniciar o chatbot
+app.post('/start-chatbot', (req, res) => {
+  chatbot.start();
+  res.send('Chatbot iniciado');
+});
+
 // Função para iniciar o servidor
 const startServer = (port) => {
   app.listen(port, () => {
@@ -38,6 +44,6 @@ const startServer = (port) => {
     }
   });
 };
-chatbot.start();
+
 // Inicia o servidor na porta principal
 startServer(primaryPort);
