@@ -49,13 +49,7 @@ function start() {
     let contactStates = loadStates(); // Load states from the JSON file
     console.log('iniciando2');
 
-    const client = new Client({
-        authStrategy: new LocalAuth(),
-        puppeteer: { 
-            headless: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        }
-    });
+    const client = new Client
     
     // client initialize does not finish at ready now.
     client.initialize();
@@ -83,7 +77,7 @@ function start() {
                     console.log('QR Code salvo como meu_qrcode.png');
                 }
             });
-        
+            /*
             // paiuting code example
             const pairingCodeEnabled = false;
             if (pairingCodeEnabled && !pairingCodeRequested) {
@@ -91,7 +85,9 @@ function start() {
                 console.log('Pairing code enabled, code: '+ pairingCode);
                 pairingCodeRequested = true;
             }
+                */
         });
+        
         
         client.on('authenticated', () => {
             console.log('AUTHENTICATED');
