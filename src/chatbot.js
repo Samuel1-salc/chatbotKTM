@@ -33,7 +33,7 @@ function start() {
     let contactStates = loadStates(); // Load states from the JSON file
     console.log('iniciando2');
 
-    const initializeClient = () => {
+  
         console.log('iniciando3');
         
 
@@ -54,9 +54,12 @@ function start() {
                 }
             });
         });
+        client.on('loading_screen', () => {
+            console.log('Carregando tela...');
+        });
         
         client.on('ready', async () => {
-            console.log('WhatsApp Web está pronto!');
+            console.log('WhatsApp Web is ready!');
            
         });
         client.initialize();
@@ -86,8 +89,8 @@ function start() {
         };
 
         console.log('iniciando4');
-    };
-    initializeClient(); // Initialize the client for the first time
+    
+    //initializeClient(); // Initialize the client for the first time
 
     const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
 
