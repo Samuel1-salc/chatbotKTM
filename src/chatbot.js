@@ -60,14 +60,29 @@ function start() {
             });
         });
 
+        client.on('authenticated', () => {
+            console.log('Cliente autenticado!');
+        });
+
+        client.on('auth_failure', msg => {
+            console.error('Falha na autenticação', msg);
+        });
+
         client.on('disconnected', (reason) => {
             console.log('Cliente desconectado:', reason);
             console.log('Tentando reconectar...');
             cleanupClient();
             client = new Client();
             initializeClient(); // Reinitialize the client
-            client.initialize();
         });
+
+        const cleanupClient = () => {
+            client.removeAllListeners('ready');
+            client.removeAllListeners('qr');
+            client.removeAllListeners('disconnected');
+            client.removeAllListeners('message');
+        };
+
         console.log('iniciando4');
     };
     initializeClient(); // Initialize the client for the first time
@@ -190,20 +205,13 @@ function start() {
             }
         } else if (!state.menuDisponivel && state.op1 && state.visibleMenu) {
             // Caso o menu não esteja disponível e o usuário tente interagir
-            //await client.sendMessage(msg.from, 'Digite *menu* para poder voltar ao menu .');
+            await client.sendMessage(msg.from, 'Digite *menu* para poder voltar ao menu .');
             state.visibleMenu = false;
         }
 
         contactStates[contactId] = state; // Update the state for the contact
         saveStates(contactStates); // Save states to the JSON file
     });
-};
-
-const cleanupClient = () => {
-    client.removeAllListeners('ready');
-    client.removeAllListeners('qr');
-    client.removeAllListeners('disconnected');
-    client.removeAllListeners('message');
 };
 
 module.exports = { start };
