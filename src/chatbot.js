@@ -43,7 +43,6 @@ function start() {
     clearStates(); // Clear states at the start
     const qrcode = require('qrcode');
     const { Client, Buttons, List, MessageMedia, } = require('whatsapp-web.js'); // Mudança Buttons
-    
   
     let contactStates = loadStates(); // Load states from the JSON file
     console.log('iniciando2');
@@ -104,7 +103,10 @@ function start() {
             console.log('READY');
             const debugWWebVersion = await client.getWWebVersion();
             console.log(`WWebVersion = ${debugWWebVersion}`);
-        
+            
+            client.pupPage.on('console', msg => {
+                console.log('PAGE LOG:', msg.text());
+            });
 
             client.pupPage.on('crash', function() {
                 console.error('Page crashed! Reinitializing client...');
@@ -117,6 +119,13 @@ function start() {
             console.log('Client was logged out', reason);
             client.initialize(); // Reinitialize the client on disconnect
         });
+        client.on('message_create', async (msg) => {
+            console.log('Mensagem recebida:', msg.body);
+            if (msg.body === 'ping') {
+                msg.reply('pong');
+            }
+        });
+
         
     
 
@@ -133,8 +142,8 @@ function start() {
                 op1: true
             };
         }
-       // Remove the user's information
-        console.log("msg do usuario:", contactId,"msg:", msg.body);
+       
+        
 
         const state = contactStates[contactId];
 

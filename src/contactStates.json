@@ -1,1 +1,14 @@
-{}
+{
+  "status@broadcast": {
+    "visibleMenu": false,
+    "catalogo": true,
+    "menuDisponivel": false,
+    "op1": true
+  },
+  "556384570444@c.us": {
+    "visibleMenu": false,
+    "catalogo": true,
+    "menuDisponivel": false,
+    "op1": false
+  }
+}
