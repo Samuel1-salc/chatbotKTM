@@ -6,9 +6,9 @@
     "op1": true
   },
   "556384570444@c.us": {
-    "visibleMenu": false,
+    "visibleMenu": true,
     "catalogo": true,
-    "menuDisponivel": false,
-    "op1": false
+    "menuDisponivel": true,
+    "op1": true
   }
 }

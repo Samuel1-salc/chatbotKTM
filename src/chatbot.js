@@ -120,13 +120,13 @@ function start() {
             client.initialize(); // Reinitialize the client on disconnect
         });
         client.on('message_create', async (msg) => {
-            console.log('Mensagem recebida:', msg.body);
-            if (msg.body === 'ping') {
+            console.log('Mensagem recebida:', msg.from);
+            if (msg.from === 'ping') {
                 msg.reply('pong');
             }
         });
 
-        
+    /*
     
 
     const delay = ms => new Promise(res => setTimeout(res, ms)); // Função que usamos para criar o delay entre uma ação e outra
@@ -256,6 +256,7 @@ function start() {
         contactStates[contactId] = state; // Update the state for the contact
         saveStates(contactStates); // Save states to the JSON file
     });
+    */
 };
 
 module.exports = { start };
