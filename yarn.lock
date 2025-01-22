@@ -1546,6 +1546,11 @@ ws@8.9.0:
   resolved "https://registry.npmjs.org/ws/-/ws-8.9.0.tgz"
   integrity sha512-Ja7nszREasGaYUYCI2k4lCKIRTt+y7XuqVoHR44YpI49TtryyqbqvDMn5eqfW7e6HzTukDRIsXqzVHScqRcafg==
 
+wwebjs-mongo@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/wwebjs-mongo/-/wwebjs-mongo-1.1.0.tgz"
+  integrity sha512-uXbhkHkwo5WDwhhn72LOIKskaUNB72+G5knRLnfd0quGGFuvTKTPjzawF2nW8ai8D3M3WomdFlXApcAUK1499g==
+
 y18n@^4.0.0:
   version "4.0.3"
   resolved "https://registry.npmjs.org/y18n/-/y18n-4.0.3.tgz"
