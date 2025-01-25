@@ -71,7 +71,7 @@ function start() {
                 }
             });
         });
-    }
+    
 
         client.on('ready', () => {
             console.log('Client is ready!');
@@ -210,6 +210,7 @@ function start() {
             saveStates(contactStates); // Save states to the JSON file
         });
         
+    }
     
 
 
