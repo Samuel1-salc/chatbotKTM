@@ -45,6 +45,8 @@ document.addEventListener('DOMContentLoaded', function () {
         loadQRCode();
     });
 
+;
+
     
   
         

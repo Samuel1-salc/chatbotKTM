@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const qrcode = require('qrcode');
-const { Client, MessageMedia, RemoteAuth } = require('whatsapp-web.js');
+const { Client, MessageMedia, LocalAuth } = require('whatsapp-web.js');
 
 // Define the path to the JSON file
 const stateFilePath = path.join(__dirname, './contactStates.json');
@@ -39,14 +39,16 @@ const clearStates = () => {
     }
 };
 
+const client = new Client;
+let contactStates = loadStates(); // Load states from the JSON file
+
 function start() {
     console.log('iniciando');
     clearStates(); // Clear states at the start
 
-    let contactStates = loadStates(); // Load states from the JSON file
+   
     console.log('iniciando2');
 
-    // Defina a URI do MongoDB aqui
 
         console.log('Initializing...');
 
@@ -69,8 +71,10 @@ function start() {
                 }
             });
         });
+    }
 
         client.on('ready', () => {
+            console.log('Client is ready!');
             const shell = repl.start('wwebjs> ');
             shell.context.client = client;
             shell.on('exit', async () => {
@@ -80,7 +84,8 @@ function start() {
 
         client.on('disconnected', (reason) => {
             console.log('Client was logged out', reason);
-            client.initialize(); // Reinitialize the client on disconnect
+            //client.initialize(); // Reinitialize the client on disconnect
+            //start();
         });
 
         
@@ -205,7 +210,7 @@ function start() {
             saveStates(contactStates); // Save states to the JSON file
         });
         
-    }
+    
 
 
 module.exports = { start };
